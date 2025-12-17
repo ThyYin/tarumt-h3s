@@ -138,6 +138,13 @@ export default function LostFoundPublicList() {
 
       // Store founder submission record
       const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) {
+        alert('You must be logged in to submit proof.')
+        setUploading(false)
+        router.push('/login')
+        return
+      }
 
       await supabase.from('lost_found_founders').insert({
         lf_id: selected.id,

@@ -69,6 +69,13 @@ export default function NewReportPage() {
         data: { session },
       } = await supabase.auth.getSession()
 
+      if (!session) {
+        alert('Session expired. Please log in again.')
+        router.push('/login')
+        setLoading(false)
+        return
+      }
+
       if (!user) {
         alert('Please log in first.')
         router.push('/login')

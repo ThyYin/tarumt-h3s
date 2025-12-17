@@ -241,23 +241,22 @@ export default function ChatListPage() {
         const msgText = parsed.text || '[Attachment]'
 
         // update chat card live
-        setTargets((prev) => {
-          const updated = prev.map((t) => {
+        setTargets((prev): Target[] => {
+          const updated: Target[] = prev.map((t): Target => {
             if (t.id !== targetId) return t
 
             return {
               ...t,
               lastMsg: msgText,
               senderId: sender_id,
-              read_by,
+              read_by: read_by ?? [],
               hasNewMsg:
                 sender_id !== userId && payload.eventType === 'INSERT',
-              lastMsgAt: msg.created_at, // 👈 IMPORTANT
+              lastMsgAt: msg.created_at,
             }
           })
 
-          // 🔥 re-sort by latest message time
-          return [...updated].sort((a: any, b: any) => {
+          return [...updated].sort((a, b) => {
             const timeA = a.lastMsgAt ? new Date(a.lastMsgAt).getTime() : 0
             const timeB = b.lastMsgAt ? new Date(b.lastMsgAt).getTime() : 0
             return timeB - timeA
@@ -317,7 +316,7 @@ export default function ChatListPage() {
     const isOwn = t.senderId === currentUserId
     const read_by = t.read_by || []
 
-    let ticks = ''
+    let ticks: React.ReactNode = null
     if (isOwn) {
       if (read_by.length === 1) ticks = <Check size={21} /> // delivered
       if (read_by.length > 1) ticks = <CheckCheck size={21} /> // read

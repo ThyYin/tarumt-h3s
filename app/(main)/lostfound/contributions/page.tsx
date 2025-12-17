@@ -21,6 +21,11 @@ import {
   ChevronRight, ChevronsRight
 } from 'lucide-react'
 
+type LostFoundImage = {
+  id: string
+  image_url: string
+}
+
 export default function ContributionsPage() {
   const { theme } = useTheme()
   const [mounted, setMounted] = useState(false)
@@ -70,6 +75,8 @@ export default function ContributionsPage() {
       .select('*')
       .in('id', lfIds)
 
+    const safeLostItems = lostItems ?? []
+
     // 3️⃣ Fetch images
     const { data: lfImages } = await supabase
       .from('lost_found_images')
@@ -77,9 +84,9 @@ export default function ContributionsPage() {
 
     // 4️⃣ Fetch staff profiles
     const staffIds = [
-      ...lostItems.map(i => i.approved_by),
-      ...lostItems.map(i => i.found_by),
-      ...lostItems.map(i => i.user_id),
+      ...safeLostItems.map(i => i.approved_by),
+      ...safeLostItems.map(i => i.found_by),
+      ...safeLostItems.map(i => i.user_id),
     ].filter(Boolean)
     const { data: staffProfiles } = await supabase
       .from('profiles')
@@ -100,7 +107,7 @@ export default function ContributionsPage() {
     )
 
     // 5️⃣ Combine everything
-    const combined = lostItems.map(item => {
+    const combined = safeLostItems.map(item => {
       const founderRow = founders.find(f => f.lf_id === item.id)
 
       return {
@@ -437,7 +444,7 @@ export default function ContributionsPage() {
               <div>
                 <p className="font-semibold mb-3">Image Proof</p>
                 <div className="grid grid-cols-4 gap-3">
-                  {selected.images.map(img => (
+                  {selected.images.map((img: LostFoundImage) => (
                     <img
                       key={img.id}
                       src={img.image_url}
