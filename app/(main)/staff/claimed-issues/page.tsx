@@ -1,6 +1,8 @@
+// claimed-issues/page.tsx
+
 'use client'
 
-// claimed-issues/page.tsx
+export const dynamic = 'force-dynamic'
 
 import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
