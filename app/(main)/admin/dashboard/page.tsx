@@ -426,6 +426,13 @@ export default function AdminDashboard() {
     }
   }
 
+  function getNumericCellValue(rowRaw: unknown, index: number): number | null {
+    if (Array.isArray(rowRaw) && rowRaw[index] !== undefined) {
+      return Number(rowRaw[index])
+    }
+    return null
+  }
+
   function handleExportPDF() {
     if (!stats) return
 
@@ -473,10 +480,11 @@ export default function AdminDashboard() {
       body: stats.categoryData.map(c => [c.name, c.value]),
       styles: { fontSize: 10 },
       didParseCell: function (data) {
-        if (
-          data.section === 'body' &&
-          Number(data.row.raw[1]) === maxCategoryValue
-        ) {
+        if (data.section !== 'body') return
+
+        const value = getNumericCellValue(data.row.raw, 1)
+
+        if (value === maxCategoryValue) {
           data.cell.styles.fillColor = [255, 241, 118]
           data.cell.styles.fontStyle = 'bold'
         }
@@ -496,10 +504,11 @@ export default function AdminDashboard() {
       body: stats.overTimeData.map(d => [d.label, d.count]),
       styles: { fontSize: 10 },
       didParseCell: function (data) {
-        if (
-          data.section === 'body' &&
-          Number(data.row.raw[1]) === maxOverTimeValue
-        ) {
+        if (data.section !== 'body') return
+
+        const value = getNumericCellValue(data.row.raw, 1)
+
+        if (value === maxOverTimeValue) {
           data.cell.styles.fillColor = [255, 241, 118]
           data.cell.styles.fontStyle = 'bold'
         }
@@ -702,11 +711,13 @@ export default function AdminDashboard() {
                         nameKey="name"
                         outerRadius={90}
                         labelLine={false}
-                        label={({ name, percent, value }) =>
-                          percent
-                            ? `${name} ${(percent * 100).toFixed(0)}% (${value})`
+                        label={({ name, percent, value }) => {
+                          const p = typeof percent === 'number' ? percent : 0
+
+                          return p
+                            ? `${name} ${(p * 100).toFixed(0)}% (${value})`
                             : ''
-                        }
+                        }}
                       >
                         {stats.categoryData.map((entry, index) => (
                           <Cell
