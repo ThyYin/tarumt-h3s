@@ -559,7 +559,7 @@ export default function AdminDashboard() {
             </div>
 
             {/* Overdue */}
-            <div
+            {/* <div
               className={`rounded-2xl shadow-sm border border-gray-100 px-6 py-5 flex flex-col justify-between
                 ${theme === 'dark' ? 'bg-gray-900' : 'bg-white'}`
               }
@@ -571,7 +571,7 @@ export default function AdminDashboard() {
               <p className="mt-3 text-xs text-gray-500">
                 Items needing admin attention to prevent unhandled reports
               </p>
-            </div>
+            </div> */}
 
             {/* Recent reports */}
             <div 
